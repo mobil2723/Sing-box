@@ -1,50 +1,10 @@
-# 1：vps一键命令，已集成到ssh工具箱中
-* 一键四协议安装脚本，支持纯v6 VPS，支持订阅，默认解锁GPT和奈飞
-* 最好用的四协议组合vless-reality|vmess-ws-tls(argo)|hysteria2|tuic5
-* 支持的系统：Ubuntu/Debian/CentOS/Alpine/Fedora/Rocky/Almalinux/kail
-* 注意nat小鸡安装完一键脚本之后需手动更改订阅端口和节点端口在允许范围内的端口，否则节点不通
-* 可在脚本前添加PORT变量，随脚本一起运行，即可定义端口，需确保PORT端口后面的3个端口可用，否则节点不通
-* 可选环境变量PORT CFIP CFPORT
-
-## VPS一键四协议安装脚本
-```
-bash <(curl -Ls https://raw.githubusercontent.com/eooce/sing-box/main/sing-box.sh)
-```
-## vps带端口变量运行示列
-PORT=开放的端口 确保后面3个端口可用 CFIP为优选IP或优选域名，CFPORT为优选ip或优选域名对应的端口
-```
-PORT=你的端口 CFIP=www.visa.com.tw CFPORT=443 bash <(curl -Ls https://raw.githubusercontent.com/eooce/sing-box/main/sing-box.sh)
-```
-
-
-## ssh综合工具箱一键脚本
-```
-curl -fsSL https://raw.githubusercontent.com/eooce/ssh_tool/main/ssh_tool.sh -o ssh_tool.sh && chmod +x ssh_tool.sh && ./ssh_tool.sh
-```
-
-# 2：Serv00|CT8一键安装脚本,集成哪吒探针
-* 一键四协议安装脚本，vmess-ws|vmess-ws-tls(argo)|hy2|tuic5默认解锁GPT和奈飞
-* 支持自定义哪吒参数，Argo参数随脚本一起运行，
-* 列如：UUID=123456 NEZHA_SERVER=nz.abcd.com NEZHA_PORT=5555 NEZHA_KEY=123ABC ARGO_DOMAIN=2go.admin.com ARGO_AUTH=abc123  
-* 注意：面板开的端口必须符合脚本中提示的要求，并且与输入的对应，面板运行应用程序的权限必须打开，个别服务器ip被墙换到新增加的服务器即可，客户端跳过证书验证需设置为true，否则hy2和tuic不通
-* 详细图文教程地址：https://linux.do/t/topic/169670
-* 保活把keep_00.sh上传至自己的vps并修改自己的参数运行,仅支持四合一和三合一，udp单协议不支持，vmess单协议自行修改运行脚本
-
-## Serv00|CT8一键四协议安装脚本vmess-ws|vmess-ws-tls(argo)|hy2|tuic5
-```
-bash <(curl -Ls https://raw.githubusercontent.com/eooce/sing-box/main/sb_serv00.sh)
-```
-
-## Serv00|CT8一键四协议无交互安装脚本vmess-ws|vmess-ws-tls(argo)|hy2|tuic5，需设置环境变量
-* 必填环境变量：VMESS_PORT HY2_PORT TUIC_PORT
-* 可选环境变量：UUID NEZHA_SERVER NEZHA_PORT NEZHA_KEY ARGO_DOMAIN ARGO_AUTH CFIP CFPORT
-* ARGO_AUTH变量使用json时，ARGO_AUTH=‘json’  需用英文输入状态下的单引号包裹，例如：ARGO_AUTH='{"AccountTag":"123","TunnelSecret":"123","TunnelID":"123"}' 
-```
-VMESS_PORT=tcp端口 HY2_PORT=udp端口 TUIC_PORT=udp端口 bash <(curl -Ls https://raw.githubusercontent.com/eooce/sing-box/main/sb_00.sh)
-```
-
 ## Serv00|CT8一键三协议安装脚本vless-reality|hy2|tuic5 
 ```
+curl -Ls https://raw.githubusercontent.com/mobil2723/sing-box/main/00.sh -o 00.sh
+chmod +x ~/domains/00.sh
+dos2unix ~/domains/00.sh   #转换文件
+./00.sh
+
 bash <(curl -Ls https://raw.githubusercontent.com/mobil2723/sing-box/main/00.sh)
 ```
 
