@@ -123,9 +123,9 @@ reading "\n清理所有进程将退出ssh连接，确定继续清理吗？【y/n
 download_and_run_singbox() {
   ARCH=$(uname -m) && DOWNLOAD_DIR="." && mkdir -p "$DOWNLOAD_DIR" && FILE_INFO=()
   if [ "$ARCH" == "arm" ] || [ "$ARCH" == "arm64" ] || [ "$ARCH" == "aarch64" ]; then
-      FILE_INFO=("https://github.com/mobil2723/test/releases/download/arm64/sb web" "https://github.com/mobil2723/test/releases/download/ARM/swith npm")
+      FILE_INFO=("https://github.com/eooce/test/releases/download/arm64/sb web" "https://github.com/eooce/test/releases/download/ARM/swith npm")
   elif [ "$ARCH" == "amd64" ] || [ "$ARCH" == "x86_64" ] || [ "$ARCH" == "x86" ]; then
-      FILE_INFO=("https://github.com/mobil2723/test/releases/download/freebsd/sb web" "https://github.com/mobil2723/test/releases/download/freebsd/npm npm")
+      FILE_INFO=("https://github.com/eooce/test/releases/download/freebsd/sb web" "https://github.com/eooce/test/releases/download/freebsd/npm npm")
   else
       echo "Unsupported architecture: $ARCH"
       exit 1
