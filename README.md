@@ -11,10 +11,14 @@ dos2unix ~/domains/00.sh   #转换文件
 ```
 ./00.sh
 ```
+## 谷歌混淆
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/mobil2723/sing-box/main/00.sh)
 ```
-
+## 苹果混淆
+```
+bash <(curl -Ls https://raw.githubusercontent.com/mobil2723/sing-box/main/apple.sh)
+```
 ## Serv00|CT8一键三协议无交互安装脚本vless-reality|vmess-splithttp|vmess-splithttp-tls(argo) 
 * 必填环境变量：VLESS_PORT ARGO_PORT
 * 可选环境变量：UUID CFIP CFPORT NEZHA_SERVER NEZHA_PORT NEZHA_KEY ARGO_DOMAIN ARGO_AUTH
