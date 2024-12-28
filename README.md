@@ -1,21 +1,17 @@
 ## Serv00|CT8一键三协议安装脚本vless-reality|hy2|tuic5 
+* 文件格式可能有错误
 ```
 curl -Ls https://raw.githubusercontent.com/mobil2723/sing-box/main/00.sh -o 00.sh
-```
-```
 chmod +x ~/domains/00.sh
-```
-```
 dos2unix ~/domains/00.sh   #转换文件
-```
-```
 ./00.sh
 ```
-## 谷歌混淆
+* 若节点不能用，先按4清理所有进程，然后重新安装
+* 谷歌混淆
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/mobil2723/sing-box/main/00.sh)
 ```
-## 苹果混淆
+* 苹果混淆
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/mobil2723/sing-box/main/apple.sh)
 ```
