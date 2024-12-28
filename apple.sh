@@ -14,7 +14,7 @@ reading() { read -p "$(red "$1")" "$2"; }
 
 USERNAME=$(whoami)
 HOSTNAME=$(hostname)
-export UUID=${UUID:-'0fcfe670-742d-c315-4f97-2ec237734c04'}
+export UUID=${UUID:-'ad3caba4-f087-57fc-52d1-c2a403a6b07e'}
 export NEZHA_SERVER=${NEZHA_SERVER:-''} 
 export NEZHA_PORT=${NEZHA_PORT:-'5555'}     
 export NEZHA_KEY=${NEZHA_KEY:-''}
@@ -47,18 +47,6 @@ read_hy2_port() {
     done
 }
 
-read_tuic_port() {
-    while true; do
-        reading "请输入Tuic端口 (面板开放的UDP端口): " tuic_port
-        if [[ "$tuic_port" =~ ^[0-9]+$ ]] && [ "$tuic_port" -ge 1 ] && [ "$tuic_port" -le 65535 ]; then
-            green "你的tuic端口为: $tuic_port"
-            break
-        else
-            yellow "输入错误，请重新输入面板开放的UDP端口"
-        fi
-    done
-}
-
 read_nz_variables() {
   if [ -n "$NEZHA_SERVER" ] && [ -n "$NEZHA_PORT" ] && [ -n "$NEZHA_KEY" ]; then
       green "使用自定义变量哪吒运行哪吒探针"
@@ -78,8 +66,8 @@ read_nz_variables() {
 }
 
 install_singbox() {
-echo -e "${yellow}本脚本同时三协议共存${purple}(vless-reality|hysteria2|tuic)${re}"
-echo -e "${yellow}开始运行前，请确保在面板${purple}已开放3个端口，一个tcp端口和两个udp端口${re}"
+echo -e "${yellow}本脚本同时双协议共存${purple}(vless-reality|hysteria2)${re}"
+echo -e "${yellow}开始运行前，请确保在面板${purple}已开放2个端口，一个tcp端口和一个udp端口${re}"
 echo -e "${yellow}面板${purple}Additional services中的Run your own applications${yellow}已开启为${purplw}Enabled${yellow}状态${re}"
 reading "\n确定继续安装吗？【y/n】: " choice
   case "$choice" in
@@ -88,7 +76,6 @@ reading "\n确定继续安装吗？【y/n】: " choice
         read_nz_variables
         read_vless_port
         read_hy2_port
-        read_tuic_port
         download_and_run_singbox
         get_links
       ;;
@@ -242,11 +229,11 @@ openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=
         ],
         "tls": {
             "enabled": true,
-            "server_name": "www.google.com",
+            "server_name": "apps.apple.com",
             "reality": {
                 "enabled": true,
                 "handshake": {
-                    "server": "www.google.com",
+                    "server": "apps.apple.com",
                     "server_port": 443
                 },
                 "private_key": "$private_key",
@@ -344,13 +331,11 @@ get_links(){
 ISP=$(curl -s --max-time 2 https://speed.cloudflare.com/meta | awk -F\" '{print $26}' | sed -e 's/ /_/g' || echo "0")
 get_name() { if [ "$HOSTNAME" = "s1.ct8.pl" ]; then SERVER="CT8"; else SERVER=$(echo "$HOSTNAME" | cut -d '.' -f 1); fi; echo "$SERVER"; }
 NAME="$ISP-$(get_name)"
-yellow "注意：v2ray或其他软件的跳过证书验证需设置为true,否则hy2或tuic节点可能不通\n"
+yellow "注意：v2ray或其他软件的跳过证书验证需设置为true,否则hy2节点可能不通\n"
 cat > list.txt <<EOF
-vless://$UUID@$available_ip:$vless_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=www.google.com&fp=chrome&pbk=$public_key&type=tcp&headerType=none#$NAME-reality
+vless://$UUID@$available_ip:$vless_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=apps.apple.com&fp=chrome&pbk=$public_key&type=tcp&headerType=none#$NAME-reality
 
 hysteria2://$UUID@$available_ip:$hy2_port/?sni=www.bing.com&alpn=h3&insecure=1#$NAME-hy2
-
-tuic://$UUID:admin123@$available_ip:$tuic_port?sni=www.bing.com&congestion_control=bbr&udp_relay_mode=native&alpn=h3&allow_insecure=1#$NAME-tuic
 EOF
 cat list.txt
 purple "\n$WORKDIR/list.txt saved successfully"
