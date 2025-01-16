@@ -206,7 +206,7 @@ openssl req -new -x509 -days 3650 -key "private.key" -out "cert.pem" -subj "/CN=
              "password": "$UUID"
          }
      ],
-     "masquerade": "https://bing.com",
+     "masquerade": "https://icloud.cdn-apple.com",
      "tls": {
          "enabled": true,
          "alpn": [
@@ -314,7 +314,7 @@ yellow "注意：v2ray或其他软件的跳过证书验证需设置为true,否�
 cat > list.txt <<EOF
 vless://$UUID@$available_ip:$vless_port?encryption=none&flow=xtls-rprx-vision&security=reality&sni=apps.apple.com&fp=chrome&pbk=$public_key&type=tcp&headerType=none#$NAME-reality
 
-hysteria2://$UUID@$available_ip:$hy2_port/?sni=www.bing.com&alpn=h3&insecure=1#$NAME-hy2
+hysteria2://$UUID@$available_ip:$hy2_port/?sni=icloud.cdn-apple.com&alpn=h3&insecure=1#$NAME-hy2
 
 EOF
 cat list.txt
