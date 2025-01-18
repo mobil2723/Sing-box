@@ -4,7 +4,7 @@
 re="\033[0m"
 red="\033[1;91m"
 green="\e[1;32m"
-yellow="\e[1;33m"  
+yellow="\e[1;33m"
 purple="\e[1;35m"
 red() { echo -e "\e[1;91m$1\033[0m"; }
 green() { echo -e "\e[1;32m$1\033[0m"; }
@@ -16,8 +16,8 @@ USERNAME=$(whoami)
 HOSTNAME=$(hostname)
 export UUID=${UUID:-'d347cfd1-7d06-39ea-e365-2421f786be12'}
 export NEZHA_SERVER=${NEZHA_SERVER:-''}
-export NEZHA_PORT=${NEZHA_PORT:-'5555'}    
-export NEZHA_KEY=${NEZHA_KEY:-''}  
+export NEZHA_PORT=${NEZHA_PORT:-'5555'}
+export NEZHA_KEY=${NEZHA_KEY:-''}
 
 [[ "$HOSTNAME" == "s1.ct8.pl" ]] && WORKDIR="domains/${USERNAME}.ct8.pl/logs" || WORKDIR="domains/${USERNAME}.serv00.net/logs"
 [ -d "$WORKDIR" ] || (mkdir -p "$WORKDIR" && chmod 777 "$WORKDIR")
@@ -49,11 +49,11 @@ read_hy2_port() {
 
 install_singbox() {
 echo -e "${yellow}本脚本同时双协议共存${purple}(vless-reality|hysteria2)${re}"
-echo -e "${yellow}开始运行前，请确保在面板${purple}已开放2个端口，一个tcp端口和一个udp端口${re}"  
+echo -e "${yellow}开始运行前，请确保在面板${purple}已开放2个端口，一个tcp端口和一个udp端口${re}"
 echo -e "${yellow}面板${purple}Additional services中的Run your own applications${yellow}已开启为${purplw}Enabled${yellow}状态${re}"
 reading "\n确定继续安装吗？【y/n】: " choice
   case "$choice" in
-    [Yy])  
+    [Yy])
         cd $WORKDIR
         read_vless_port
         read_hy2_port
@@ -73,7 +73,7 @@ uninstall_singbox() {
           rm -rf $WORKDIR
           clear
           green "已完全卸载"
-          ;;  
+          ;;
         [Nn]) exit 0 ;;
     	*) red "无效的选择，请输入y或n" && menu ;;
     esac
@@ -93,7 +93,7 @@ download_and_run_singbox() {
   if [ "$ARCH" == "arm" ] || [ "$ARCH" == "arm64" ] || [ "$ARCH" == "aarch64" ]; then
       FILE_INFO=("https://github.com/eooce/test/releases/download/arm64/sb web" "https://github.com/eooce/test/releases/download/ARM/swith npm")
   elif [ "$ARCH" == "amd64" ] || [ "$ARCH" == "x86_64" ] || [ "$ARCH" == "x86" ]; then
-      FILE_INFO=("https://github.com/eooce/test/releases/download/linux/sb web" "https://github.com/eooce/test/releases/download/linux/npm npm")  
+      FILE_INFO=("https://github.com/eooce/test/releases/download/linux/sb web" "https://github.com/eooce/test/releases/download/linux/npm npm")
   else
       echo "Unsupported architecture: $ARCH"
       exit 1
@@ -280,7 +280,6 @@ purple "\n$WORKDIR/list.txt saved successfully"
 purple "Running done!\n"
 sleep 3
 rm -rf config.json sb.log core fake_useragent_0.2.0.json
-
 }
 
 #主菜单
@@ -313,4 +312,3 @@ menu() {
         *) red "无效的选项，请输入 0 到 4" ;;
     esac
 }
-menu
