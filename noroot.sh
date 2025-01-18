@@ -313,4 +313,4 @@ menu() {
         *) red "无效的选项，请输入 0 到 4" ;;
     esac
 }
-   echo  
+menu
