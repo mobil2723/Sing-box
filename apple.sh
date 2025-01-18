@@ -13,17 +13,12 @@ reading() { read -p "$(red "$1")" "$2"; }
 export LC_ALL=C
 USERNAME=$(whoami)
 HOSTNAME=$(hostname)
-export UUID=${UUID:-'d347cfd1-7d06-39ea-e365-2421f786be12'}
+export UUID=${UUID:-'bc97f674-c578-4940-9234-0a1da46041b0'}
 export NEZHA_SERVER=${NEZHA_SERVER:-''} 
 export NEZHA_PORT=${NEZHA_PORT:-'5555'}     
 export NEZHA_KEY=${NEZHA_KEY:-''} 
-export ARGO_DOMAIN=${ARGO_DOMAIN:-''}   
-export ARGO_AUTH=${ARGO_AUTH:-''}
 export VMESS_PORT=${VMESS_PORT:-''}
-export TUIC_PORT=${TUIC_PORT:-''}
-export HY2_PORT=${HY2_PORT:-''}
-export CFIP=${CFIP:-'www.visa.com.tw'} 
-export CFPORT=${CFPORT:-'443'} 
+export HY2_PORT=${HY2_PORT:-''} 
 export SUB_TOKEN=${SUB_TOKEN:-'sub'}
 FILE_PATH="/usr/home/${USERNAME}/domains/${USERNAME}.serv00.net/public_html"
 [[ "$HOSTNAME" == "s1.ct8.pl" ]] && WORKDIR="domains/${USERNAME}.ct8.pl/logs" || WORKDIR="domains/${USERNAME}.serv00.net/logs"
@@ -35,7 +30,7 @@ port_list=$(devil port list)
 tcp_ports=$(echo "$port_list" | grep -c "tcp")
 udp_ports=$(echo "$port_list" | grep -c "udp")
 
-if [[ $tcp_ports -ne 1 || $udp_ports -ne 2 ]]; then
+if [[ $tcp_ports -ne 1 || $udp_ports -ne 1 ]]; then
     red "端口数量不符合要求，正在调整..."
 
     if [[ $tcp_ports -gt 1 ]]; then
@@ -48,7 +43,7 @@ if [[ $tcp_ports -ne 1 || $udp_ports -ne 2 ]]; then
 
     if [[ $udp_ports -gt 2 ]]; then
         udp_to_delete=$((udp_ports - 2))
-        echo "$port_list" | awk '/udp/ {print $1, $2}' | head -n $udp_to_delete | while read port type; do
+        echo "$port_list" | awk '/udp/ {print $1, $1}' | head -n $udp_to_delete | while read port type; do
             devil port del $type $port
             green "已删除UDP端口: $port"
         done
@@ -57,7 +52,7 @@ if [[ $tcp_ports -ne 1 || $udp_ports -ne 2 ]]; then
     if [[ $tcp_ports -lt 1 ]]; then
         while true; do
             tcp_port=$(shuf -i 10000-65535 -n 1) 
-            result=$(devil port add tcp $tcp_port 2>&1)
+            result=$(devil port add tcp $tcp_port 1=&1)
             if [[ $result == *"succesfully"* ]]; then
                 green "已添加TCP端口: $tcp_port"
                 break
@@ -67,12 +62,12 @@ if [[ $tcp_ports -ne 1 || $udp_ports -ne 2 ]]; then
         done
     fi
 
-    if [[ $udp_ports -lt 2 ]]; then
-        udp_ports_to_add=$((2 - udp_ports))
+    if [[ $udp_ports -lt 1 ]]; then
+        udp_ports_to_add=$((1 - udp_ports))
         udp_ports_added=0
         while [[ $udp_ports_added -lt $udp_ports_to_add ]]; do
             udp_port=$(shuf -i 10000-65535 -n 1) 
-            result=$(devil port add udp $udp_port 2>&1)
+            result=$(devil port add udp $udp_port 1=&1)
             if [[ $result == *"succesfully"* ]]; then
                 green "已添加UDP端口: $udp_port"
                 if [[ $udp_ports_added -eq 0 ]]; then
@@ -98,33 +93,6 @@ fi
 
 export VMESS_PORT=$tcp_port
 export HY2_PORT=$udp_port1
-}
-
-argo_configure() {
-clear
-purple "正在安装中,请稍等..."
-  if [[ -z $ARGO_AUTH || -z $ARGO_DOMAIN ]]; then
-    green "ARGO_DOMAIN or ARGO_AUTH is empty,use quick tunnel"
-    return
-  fi
-
-  if [[ $ARGO_AUTH =~ TunnelSecret ]]; then
-    echo $ARGO_AUTH > tunnel.json
-    cat > tunnel.yml << EOF
-tunnel: $(cut -d\" -f12 <<< "$ARGO_AUTH")
-credentials-file: tunnel.json
-protocol: http2
-
-ingress:
-  - hostname: $ARGO_DOMAIN
-    service: http://localhost:$VMESS_PORT
-    originRequest:
-      noTLSVerify: true
-  - service: http_status:404
-EOF
-  else
-    green "ARGO_AUTH mismatch TunnelSecret,use token connect to tunnel"
-  fi
 }
 
 generate_config() {
@@ -175,22 +143,6 @@ generate_config() {
          "certificate_path": "cert.pem",
          "key_path": "private.key"
         }
-    },
-    {
-      "tag": "vmess-ws-in",
-      "type": "vmess",
-      "listen": "::",
-      "listen_port": $VMESS_PORT,
-      "users": [
-      {
-        "uuid": "$UUID"
-      }
-    ],
-    "transport": {
-      "type": "ws",
-      "path": "/vmess-argo",
-      "early_data_header_name": "Sec-WebSocket-Protocol"
-      }
     },
     {
       "tag": "tuic-in",
@@ -369,13 +321,15 @@ get_ip() {
 generate_sub_link () {
 base64 -w0 list.txt > ${FILE_PATH}/${SUB_TOKEN}_v2.log
 V2rayN_LINK="https://${USERNAME}.serv00.net/${SUB_TOKEN}_v2.log"
+PHP_URL="https://github.com/eooce/Sing-box/releases/download/00/get_sub.php"
 curl -sS "https://sublink.eooce.com/clash?config=${V2rayN_LINK}" -o ${FILE_PATH}/${SUB_TOKEN}_clash.yaml
 curl -sS "https://sublink.eooce.com/singbox?config=${V2rayN_LINK}" -o ${FILE_PATH}/${SUB_TOKEN}_singbox.yaml
-CLASH_LINK="https://${USERNAME}.serv00.net/${SUB_TOKEN}_clash.yaml"
-SINGBOX_LINK="https://${USERNAME}.serv00.net/${SUB_TOKEN}_singbox.yaml"
-yellow "\n节点订阅链接：\nClash: \e[1;35m${CLASH_LINK}\e[0m\n"   
-yellow "Sing-box: \e[1;35m${SINGBOX_LINK}\e[0m\n"
-yellow "V2rayN/nekoray/小火箭: \e[1;35m${V2rayN_LINK}\e[0m\n\n"
+command -v curl &> /dev/null && curl -s -o "${FILE_PATH}/get_sub.php" "$PHP_URL" || command -v wget &> /dev/null && wget -q -O "${FILE_PATH}/get_sub.php" "$PHP_URL" || red "Warning: Neither curl nor wget is installed. You can't use the subscription"
+CLASH_LINK="https://${USERNAME}.serv00.net/get_sub.php?file=${SUB_TOKEN}_clash.yaml"
+SINGBOX_LINK="https://${USERNAME}.serv00.net/get_sub.php?file=${SUB_TOKEN}_singbox.yaml"
+yellow "\n节点订阅链接：\nClash: ${purple}${CLASH_LINK}${re}\n"   
+yellow "Sing-box: ${purple}${SINGBOX_LINK}${re}\n"
+yellow "V2rayN/Nekoray/小火箭: ${purple}${V2rayN_LINK}${re}\n\n"
 }
 
 get_links(){
@@ -389,11 +343,8 @@ yellow "注意：v2ray或其他软件的跳过证书验证需设置为true,否�
 cat > list.txt <<EOF
 vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$NAME-vmss\", \"add\": \"$available_ip\", \"port\": \"$VMESS_PORT\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"none\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"\", \"path\": \"/vmess-argo?ed=2048\", \"tls\": \"\", \"sni\": \"\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)
 
-vmess://$(echo "{ \"v\": \"2\", \"ps\": \"$NAME-vmss-argo\", \"add\": \"$CFIP\", \"port\": \"$CFPORT\", \"id\": \"$UUID\", \"aid\": \"0\", \"scy\": \"none\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/vmess-argo?ed=2048\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"\"}" | base64 -w0)
-
 hysteria2://$UUID@$available_ip:$HY2_PORT/?sni=icloud.cdn-apple.com&alpn=h3&insecure=1#$NAME-hy2
 
-tuic://$UUID:admin123@$available_ip:$TUIC_PORT?sni=icloud.cdn-apple.com&congestion_control=bbr&udp_relay_mode=native&alpn=h3&allow_insecure=1#$NAME-tuic
 EOF
 cat list.txt
 generate_sub_link
