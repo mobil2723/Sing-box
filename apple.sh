@@ -55,10 +55,8 @@ reading "\n确定继续安装吗？【y/n】: " choice
   case "$choice" in
     [Yy])
         cd $WORKDIR
-        read_nz_variables
         read_vless_port
         read_hy2_port
-        read_tuic_port
         download_and_run_singbox
         get_links
       ;;
